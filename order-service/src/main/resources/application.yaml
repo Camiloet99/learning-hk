@@ -1,0 +1,19 @@
+server:
+  port: ${SERVER_PORT:8083} # por defecto 8083
+
+spring:
+  r2dbc:
+    url: ${R2DBC_URL:r2dbc:mysql://localhost:3306/orderdb}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+  webclient:
+    connect-timeout: ${WEBCLIENT_CONNECT_TIMEOUT:5000}
+    read-timeout: ${WEBCLIENT_READ_TIMEOUT:5000}
+
+app:
+  domains:
+    inventory: ${INVENTORY_DOMAIN:http://localhost:8082}
+  retry:
+    max-attempts: ${RETRY_MAX_ATTEMPTS:3}
+    delay-ms: ${RETRY_DELAY_MS:1000}

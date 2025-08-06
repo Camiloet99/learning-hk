@@ -1,0 +1,32 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+kafka:
+  topics:
+    new-inventory: new-inventory
+    inventory-updated: inventory-updated
+    new-category: new-category
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:store-group}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+
+  r2dbc:
+    url: r2dbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:storedb_a}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+app:
+  domains:
+    order: ${ORDER_SERVICE_URL:http://localhost:8083}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
