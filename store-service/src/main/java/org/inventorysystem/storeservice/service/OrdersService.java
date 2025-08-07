@@ -15,6 +15,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ * Service layer that handles order placement, retrieval and inventory synchronization logic.
+ * Acts as intermediary between Kafka events, database layer, and order service facade.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +29,8 @@ public class OrdersService {
     private final DatabaseClient databaseClient;
 
     /**
-     * Handles inventory synchronization from Kafka.
+     * Synchronizes the inventory by updating or creating the product locally
+     * based on the incoming Kafka event from the inventory service.
      *
      * @param event The inventory update event.
      * @return Mono<Void> indicating completion.
@@ -38,18 +43,25 @@ public class OrdersService {
                 })
                 .switchIfEmpty(storeInventoryRepository.save(
                         ProductEntity.builder()
-                                .quantity(event.getNewQuantity())
-                                .price(event.getPrice())
-                                .description(event.getDescription())
-                                .categoryId(event.getCategoryId())
-                                .name(event.getProductName())
                                 .id(event.getProductId())
+                                .name(event.getProductName())
+                                .price(event.getPrice())
+                                .categoryId(event.getCategoryId())
+                                .quantity(event.getNewQuantity())
+                                .description(event.getDescription())
                                 .build()))
                 .doOnSuccess(updated -> log.info("Inventory synced for productId={}, quantity={}",
                         updated.getId(), updated.getQuantity()))
                 .then();
     }
 
+    /**
+     * Creates a new inventory record directly in the database using a raw SQL insert.
+     * Intended for Kafka-based event-driven insertions.
+     *
+     * @param event The inventory update event containing product details.
+     * @return Mono<Void> indicating completion.
+     */
     public Mono<Void> createInventoryFromEvent(InventoryUpdatedEvent event) {
         return databaseClient.sql("""
                     INSERT INTO products (id, name, price, category_id, quantity, description)
@@ -66,19 +78,44 @@ public class OrdersService {
                 .doOnError(e -> log.error("Failed to insert product: {}", e.getMessage()));
     }
 
+    /**
+     * Sends the order to the order-service via the OrderFacade.
+     *
+     * @param request OrderRequest containing userId, storeId, and item list.
+     * @return Mono with OrderResponse.
+     */
     public Mono<OrderResponse> placeOrder(OrderRequest request) {
         return orderFacade.sendOrder(request);
     }
 
+    /**
+     * Retrieves all orders associated with a specific store.
+     *
+     * @param storeId the store ID.
+     * @return Mono emitting list of OrderResponse.
+     */
     public Mono<List<OrderResponse>> getOrdersByStore(Long storeId) {
         return orderFacade.getOrdersByStore(storeId);
     }
 
+    /**
+     * Retrieves all orders placed by a specific user.
+     *
+     * @param userId the user ID.
+     * @return Mono emitting list of OrderResponse.
+     */
     public Mono<List<OrderResponse>> getOrdersByUser(Long userId) {
         return orderFacade.getOrdersByUser(userId);
     }
 
+    /**
+     * Retrieves all items of a specific order.
+     *
+     * @param orderId the order ID.
+     * @return Mono emitting list of OrderItemResponse.
+     */
     public Mono<List<OrderItemResponse>> getOrderItems(Long orderId) {
         return orderFacade.getOrderItems(orderId);
     }
 }
+

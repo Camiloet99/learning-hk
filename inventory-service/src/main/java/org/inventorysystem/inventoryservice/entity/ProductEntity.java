@@ -1,13 +1,13 @@
 package org.inventorysystem.inventoryservice.entity;
 
 import lombok.*;
-import org.inventorysystem.inventoryservice.dto.CreateProductRequest;
+import org.inventorysystem.inventoryservice.dto.request.CreateProductRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.relational.core.mapping.Column;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("products")

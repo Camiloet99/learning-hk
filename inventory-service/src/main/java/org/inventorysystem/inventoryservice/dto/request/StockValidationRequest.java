@@ -1,31 +1,24 @@
-package org.inventorysystem.inventoryservice.dto;
+package org.inventorysystem.inventoryservice.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO for validating stock availability of a specific product and quantity.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Request to validate stock for a product")
 public class StockValidationRequest {
 
-    /**
-     * The ID of the product to check stock for.
-     * Must not be null.
-     */
     @NotNull(message = "Product ID must not be null")
+    @Schema(description = "Product ID", example = "1", required = true)
     private Long productId;
 
-    /**
-     * The quantity requested.
-     * Must be a positive integer.
-     */
     @NotNull(message = "Requested quantity must not be null")
     @Positive(message = "Requested quantity must be greater than zero")
+    @Schema(description = "Quantity to check availability for", example = "5", required = true)
     private Integer quantity;
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.inventorysystem.inventoryservice.dto.CreateCategoryRequest;
+import org.inventorysystem.inventoryservice.dto.request.CreateCategoryRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
