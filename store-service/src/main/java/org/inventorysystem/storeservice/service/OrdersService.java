@@ -7,13 +7,10 @@ import org.inventorysystem.storeservice.event.InventoryUpdatedEvent;
 import org.inventorysystem.storeservice.repository.StoreInventoryRepository;
 import org.inventorysystem.storeservice.service.facade.order.OrderFacade;
 import org.inventorysystem.storeservice.service.facade.order.request.OrderRequest;
-import org.inventorysystem.storeservice.service.facade.order.response.OrderItemResponse;
 import org.inventorysystem.storeservice.service.facade.order.response.OrderResponse;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 /**
  * Service layer that handles order placement, retrieval and inventory synchronization logic.
@@ -86,36 +83,6 @@ public class OrdersService {
      */
     public Mono<OrderResponse> placeOrder(OrderRequest request) {
         return orderFacade.sendOrder(request);
-    }
-
-    /**
-     * Retrieves all orders associated with a specific store.
-     *
-     * @param storeId the store ID.
-     * @return Mono emitting list of OrderResponse.
-     */
-    public Mono<List<OrderResponse>> getOrdersByStore(Long storeId) {
-        return orderFacade.getOrdersByStore(storeId);
-    }
-
-    /**
-     * Retrieves all orders placed by a specific user.
-     *
-     * @param userId the user ID.
-     * @return Mono emitting list of OrderResponse.
-     */
-    public Mono<List<OrderResponse>> getOrdersByUser(Long userId) {
-        return orderFacade.getOrdersByUser(userId);
-    }
-
-    /**
-     * Retrieves all items of a specific order.
-     *
-     * @param orderId the order ID.
-     * @return Mono emitting list of OrderItemResponse.
-     */
-    public Mono<List<OrderItemResponse>> getOrderItems(Long orderId) {
-        return orderFacade.getOrderItems(orderId);
     }
 }
 

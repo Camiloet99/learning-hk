@@ -1,4 +1,4 @@
-# 📦 Sistema Distribuido de Gestión de Inventario
+# Sistema Distribuido de Gestión de Inventario
 
 ## 1. Introducción
 
@@ -63,7 +63,6 @@ La sincronización inmediata del stock permite que los usuarios y clientes final
 | **WebFlux**                    | Asincronía eficiente y manejo reactivo.                       |
 | **Retry en fachadas**          | Mayor tolerancia a fallos.                                    |
 | **Excepciones personalizadas** | Mejor trazabilidad de errores.                                |
-| **JWT básico**                 | Simulación de seguridad y autenticación.                      |
 | **Pods redundantes**           | Alta disponibilidad en Inventory y Orders.                    |
 
 ---
@@ -103,9 +102,55 @@ La adopción de Spring WebFlux y programación reactiva permitió una gestión m
 
 Asimismo, se establecieron las bases para una futura expansión del sistema con características como seguridad avanzada (OAuth2), monitorización distribuida (Grafana/Prometheus) y despliegue escalable (Kubernetes). El diseño modular y desacoplado asegura que cada componente pueda evolucionar o escalar independientemente, favoreciendo la mantenibilidad y la innovación continua.
 
-### Futuras mejoras:
+## Futuras mejoras:
 
-- Trazabilidad distribuida (Micrometer + Grafana)
-- OAuth2 y control de acceso avanzado
-- Orquestación con Kubernetes
-- Modo offline y re-sincronización
+Para garantizar la evolución continua del sistema y su capacidad de adaptación a nuevos escenarios de escalabilidad, resiliencia y seguridad, se proponen las siguientes mejoras estructurales:
+
+### 1. Arquitectura Evolutiva y Tolerancia a Fallos
+
+**Kafka distribuido y descentralizado por nodo de tienda:** Se propone transicionar hacia una arquitectura donde cada instancia del Store Service opere con su propio nodo de Kafka local. Estos nodos estarán configurados como parte de un único cluster global federado, asegurando:
+
+- Alta disponibilidad de mensajería incluso ante fallos de red o caída de nodos centrales.
+- Independencia operativa de cada tienda, con capacidad de reintentar sincronización en caso de reconexión.
+- Latencia mínima en la escritura y consumo de eventos locales.
+
+**Replicación y balanceo de carga en servicios críticos:** Se planea la implementación de múltiples réplicas para los pods del Inventory Service y Order Service, acompañados de un load balancer configurado con políticas de failover. Esto permitirá distribuir eficientemente la carga de trabajo y garantizar continuidad operativa ante fallos de instancias individuales.
+
+### 2. Seguridad Avanzada y Control de Acceso
+
+**Sistema de suscripción por tienda con autenticación por API Key:** Cada tienda deberá registrarse en el sistema para obtener una API Key única que la identifique como cliente autorizado del sistema central. Esta clave será requerida tanto para consumir eventos desde Kafka como para interactuar con el Order Service, permitiendo un control granular de acceso.
+
+- Las API Keys se gestionarán mediante un servicio de autorización simple (basado inicialmente en JWT y extensible a OAuth2).
+- Futura integración con OAuth2 y servidor de identidad:
+
+### 3. Observabilidad y Monitorización Distribuida
+
+- Trazabilidad distribuida con Prometheus, Grafana y/o Datadog:
+- Integración con herramientas como Micrometer para instrumentar métricas personalizadas y trazas distribuidas.
+- Monitorización de health-checks, métricas de consumo de Kafka, uso de recursos y errores por servicio.
+- Visualización unificada en Grafana y alertas automatizadas mediante Prometheus AlertManager.
+- Registro de eventos clave del flujo de compra e inventario (creación, modificación, fallos, reintentos).
+- Persistencia de logs estructurados y seguimiento temporal para análisis retrospectivo.
+
+### 4. Resiliencia Operativa y Modo Offline
+
+**Modo offline con re-sincronización automática:** Las tiendas podrán seguir operando temporalmente incluso si pierden conexión con el sistema central. Al restablecer la conexión, los eventos acumulados (tanto locales como pendientes del sistema central) serán sincronizados automáticamente mediante mecanismos de retry con respaldo en disco o memoria.
+
+### 5. Escalabilidad y Despliegue Orquestado
+
+- Contenedorización avanzada y despliegue en Kubernetes.
+- Habilitación de políticas de autoscaling horizontal y vertical.
+- Configuración de nodos tolerantes a fallos para servicios con mayor carga (Inventory y Orders).
+
+## Apoyo de Herramientas de Generación de Inteligencia Artificial (GenAI)
+
+Durante el desarrollo del sistema distribuido, se utilizó activamente el apoyo de herramientas de Inteligencia Artificial Generativa como asistente técnico para acelerar la codificación y reducir errores en la construcción de capas del sistema.
+
+En particular, se aprovecharon estas herramientas para:
+
+- Generar rápidamente controladores REST bien documentados y estructurados.
+- Producir clases de servicios con anotaciones y convenciones.
+- Escribir pruebas unitarias con mocking eficiente de dependencias.
+- Documentar la arquitectura y explicar decisiones técnicas de forma clara y profesional.
+
+Estas herramientas permitieron una mayor agilidad en el desarrollo, validación y documentación de los microservicios, así como una reducción significativa en el tiempo necesario para tareas repetitivas o estructurales dando una mayor productividad, coherencia en la arquitectura, y mejor trazabilidad del código, sin sacrificar el control humano sobre el diseño ni la calidad del sistema.

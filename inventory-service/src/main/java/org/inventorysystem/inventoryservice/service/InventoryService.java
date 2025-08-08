@@ -14,7 +14,7 @@ import org.inventorysystem.inventoryservice.exception.ErrorCode;
 import org.inventorysystem.inventoryservice.exception.InsufficientStockException;
 import org.inventorysystem.inventoryservice.exception.InventoryNotFoundException;
 import org.inventorysystem.inventoryservice.exception.KafkaPublishException;
-import org.inventorysystem.inventoryservice.kafka.CategoryCreatedEvent;
+import org.inventorysystem.inventoryservice.event.CategoryCreatedEvent;
 import org.inventorysystem.inventoryservice.kafka.KafkaPublisherService;
 import org.inventorysystem.inventoryservice.repository.CategoryRepository;
 import org.inventorysystem.inventoryservice.repository.ProductRepository;
@@ -68,7 +68,7 @@ public class InventoryService {
                             .categoryName(saved.getName())
                             .build();
 
-                    String topic = environmentConfig.getTopics().getNewCategory(); // agrega esto a tu config
+                    String topic = environmentConfig.getTopics().getNewCategory();
                     kafkaPublisherService.publish(topic, String.valueOf(saved.getId()), event);
                     log.info("Published category creation event for ID: {}", saved.getId());
                 })
@@ -258,14 +258,14 @@ public class InventoryService {
                             .categoryId(category.getId())
                             .categoryName(category.getName())
                             .newQuantity(product.getQuantity())
+                            .price(product.getPrice())
+                            .description(product.getDescription())
                             .productName(product.getName())
                             .productId(product.getId())
                             .eventType(eventType)
                             .build();
 
-                    String topic = delta > 0
-                            ? environmentConfig.getTopics().getNewInventory()
-                            : environmentConfig.getTopics().getInventoryUpdated();
+                    String topic = environmentConfig.getTopics().getInventoryUpdated();
                     kafkaPublisherService.publish(topic, String.valueOf(product.getId()), event);
                 })
                 .doOnError(e -> {

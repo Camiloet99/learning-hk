@@ -61,7 +61,7 @@ public class InventoryFacade {
      */
     private Mono<ValidateStockResponse> validateStock(OrderRequest.OrderItemRequest item) {
         return inventoryClient.post()
-                .uri(environmentConfig.getDomains().getInventory() + "/validate-stock")
+                .uri(environmentConfig.getDomains().getInventory() + "/api/inventory/validate-stock")
                 .bodyValue(item)
                 .retrieve()
                 .bodyToMono(ValidateStockResponse.class)
@@ -81,7 +81,7 @@ public class InventoryFacade {
      */
     private Mono<Void> decreaseStock(OrderRequest.OrderItemRequest item) {
         return inventoryClient.put()
-                .uri(environmentConfig.getDomains().getInventory() + "/" + item.getProductId() + "/decrease?amount=" + item.getQuantity())
+                .uri(environmentConfig.getDomains().getInventory() + "/api/inventory/" + item.getProductId() + "/decrease?amount=" + item.getQuantity())
                 .retrieve()
                 .bodyToMono(Void.class)
                 .doOnSuccess(response ->

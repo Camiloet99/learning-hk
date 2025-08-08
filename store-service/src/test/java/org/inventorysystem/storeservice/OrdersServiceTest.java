@@ -1,12 +1,10 @@
 package org.inventorysystem.storeservice;
 
-import org.inventorysystem.storeservice.entity.ProductEntity;
 import org.inventorysystem.storeservice.event.InventoryUpdatedEvent;
 import org.inventorysystem.storeservice.repository.StoreInventoryRepository;
 import org.inventorysystem.storeservice.service.OrdersService;
 import org.inventorysystem.storeservice.service.facade.order.OrderFacade;
 import org.inventorysystem.storeservice.service.facade.order.request.OrderRequest;
-import org.inventorysystem.storeservice.service.facade.order.response.OrderItemResponse;
 import org.inventorysystem.storeservice.service.facade.order.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +19,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 class OrdersServiceTest {
@@ -74,30 +73,4 @@ class OrdersServiceTest {
                 .verifyComplete();
     }
 
-    @Test
-    void getOrdersByStore_shouldReturnList() {
-        when(orderFacade.getOrdersByStore(1L)).thenReturn(Mono.just(List.of(new OrderResponse())));
-
-        StepVerifier.create(ordersService.getOrdersByStore(1L))
-                .expectNextMatches(list -> list.size() == 1)
-                .verifyComplete();
-    }
-
-    @Test
-    void getOrdersByUser_shouldReturnList() {
-        when(orderFacade.getOrdersByUser(2L)).thenReturn(Mono.just(List.of(new OrderResponse())));
-
-        StepVerifier.create(ordersService.getOrdersByUser(2L))
-                .expectNextMatches(list -> list.size() == 1)
-                .verifyComplete();
-    }
-
-    @Test
-    void getOrderItems_shouldReturnList() {
-        when(orderFacade.getOrderItems(99L)).thenReturn(Mono.just(List.of(new OrderItemResponse())));
-
-        StepVerifier.create(ordersService.getOrderItems(99L))
-                .expectNextMatches(list -> list.size() == 1)
-                .verifyComplete();
-    }
 }

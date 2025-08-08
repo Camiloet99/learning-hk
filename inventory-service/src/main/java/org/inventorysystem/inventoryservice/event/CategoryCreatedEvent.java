@@ -1,4 +1,4 @@
-package org.inventorysystem.inventoryservice.kafka;
+package org.inventorysystem.inventoryservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

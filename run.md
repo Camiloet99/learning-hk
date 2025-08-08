@@ -64,7 +64,7 @@ Después de corregir el problema, vuelve a ejecutar el script completo desde la 
 
 ---
 
-## Resultado Esperado
+## Resultado esperado
 
 Si todo está correcto, al final verás los logs de los contenedores iniciando correctamente. Esto incluye:
 
@@ -79,3 +79,18 @@ docker ps
 ```
 
 ---
+
+## En caso de no funcionar
+
+Realizar una instalación manual de cada servicio de Maven
+
+```bash
+cd {cada servicio}
+mvn clean install
+```
+
+Para luego ejecutar docker compose con el siguiente comando en la carpeta raíz del proyecto:
+
+```bash
+docker-compose up --build
+```

@@ -9,7 +9,7 @@ import org.inventorysystem.inventoryservice.entity.ProductEntity;
 import org.inventorysystem.inventoryservice.event.InventoryUpdatedEvent;
 import org.inventorysystem.inventoryservice.exception.InsufficientStockException;
 import org.inventorysystem.inventoryservice.exception.InventoryNotFoundException;
-import org.inventorysystem.inventoryservice.kafka.CategoryCreatedEvent;
+import org.inventorysystem.inventoryservice.event.CategoryCreatedEvent;
 import org.inventorysystem.inventoryservice.kafka.KafkaPublisherService;
 import org.inventorysystem.inventoryservice.repository.CategoryRepository;
 import org.inventorysystem.inventoryservice.repository.ProductRepository;
@@ -112,7 +112,7 @@ class InventoryServiceTest {
                 .expectNextMatches(updated -> updated.getQuantity() == 8)
                 .verifyComplete();
 
-        verify(kafkaPublisherService).publish(eq("new-inventory-topic"), eq("1"), any(InventoryUpdatedEvent.class));
+        verify(kafkaPublisherService).publish(eq("inventory-updated-topic"), eq("1"), any(InventoryUpdatedEvent.class));
     }
 
     @Test

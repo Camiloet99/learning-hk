@@ -2,7 +2,7 @@
 
 echo "Compilando microservicios con Maven..."
 
-for service in auth-service inventory-service order-service store-service; do
+for service in inventory-service order-service store-service; do
   echo "Compilando $service ..."
   cd "$service"
   mvn clean install -DskipTests

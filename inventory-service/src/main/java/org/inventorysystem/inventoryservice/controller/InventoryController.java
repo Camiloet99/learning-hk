@@ -48,7 +48,7 @@ public class InventoryController {
 
     @Operation(summary = "Increase stock", description = "Increases the quantity of a product in inventory")
     @PutMapping("/{id}/increase")
-    public Mono<ResponseEntity<ProductEntity>> increase(
+    public Mono<ResponseEntity<ProductEntity>> increaseStock(
             @PathVariable Long id,
             @RequestParam int amount) {
         return inventoryService.updateQuantity(id, amount)
@@ -57,7 +57,7 @@ public class InventoryController {
 
     @Operation(summary = "Decrease stock", description = "Decreases the quantity of a product in inventory")
     @PutMapping("/{id}/decrease")
-    public Mono<ResponseEntity<ProductEntity>> decrease(
+    public Mono<ResponseEntity<ProductEntity>> decreaseStock(
             @PathVariable Long id,
             @RequestParam int amount) {
         return inventoryService.updateQuantity(id, -amount)
@@ -66,7 +66,7 @@ public class InventoryController {
 
     @Operation(summary = "Get product by ID", description = "Retrieves a product by its ID")
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<ProductEntity>> getById(@PathVariable Long id) {
+    public Mono<ResponseEntity<ProductEntity>> getProductById(@PathVariable Long id) {
         return inventoryService.getById(id)
                 .map(ResponseEntity::ok);
     }
